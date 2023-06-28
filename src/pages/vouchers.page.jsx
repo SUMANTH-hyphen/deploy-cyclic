@@ -1,0 +1,83 @@
+import { Box, IconButton } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { deleteVoucherData, getVouchers } from "../services/voucher.services";
+import DataTable from "../components/table.grid";
+import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
+import { SnackbarAlert } from "../components/feedback";
+
+const Vouchers = () => {
+    const [tableData, setTableData] = useState([]);
+    const [load, setLoad] = useState(false);
+    const [toast, setToast] = useState({open: false, msg: "", type: ""})
+
+    const handleToastClose = () =>{
+        setToast({...toast, open: false})
+    }
+
+  const tableHeaders = [
+    { field: "voucher_id", headerName: "Voucher Id", flex: 1, minWidth: 100 },
+    { field: "client_id", headerName: "Client Id", flex: 1, minWidth: 100 },
+    { field: "initial_amount", headerName: "Initial Amount", flex: 1,  minWidth: 100 },
+    { field: "balance", headerName: "Balance", flex: 0.3, minWidth: 100 },
+    { field: "start_date", headerName: "Start Date", flex: 1 , minWidth: 100},
+    { field: "end_date", headerName: "End Date", flex: 1 , minWidth: 100},
+    {
+        field: "last_transaction_id",
+        headerName: "Last Transaction Id",
+        flex: 1,
+        minWidth: 100
+    },
+    { field: "last_used", headerName: "Last Used", flex: 1, minWidth: 120 },
+    { field: "status", headerName: "Status", width: 80 },
+    {
+      field: "delete",
+      headerName: "Delete",
+      flex: 0.5,
+      renderCell: (params) => (
+        <>
+          <IconButton onClick={() => handleDelete(params?.row?.voucher_id)}>
+            <DeleteOutlineOutlinedIcon color="primary" />
+          </IconButton>
+        </>
+      ),
+    },
+  ];
+
+  const handleDelete = async (id) => {
+    setLoad(true)
+    const {response, error} = await deleteVoucherData(id)
+    setLoad(false)
+    if(error){
+        return setToast({open: true, msg: "something went wrong", type: "error"})
+    }
+    console.log(response)
+    if(response?.status.includes("ID Deleted")){
+        setToast({open: true, msg: "Deleted Successfully", type: "success"})
+    }
+  };
+
+  const fetchVochers = async () => {
+    setLoad(true);
+    const { response, error } = await getVouchers();
+    setLoad(false);
+    if (error) {
+      return setToast({open: true, msg: "something went wrong", type: "error"});
+    }
+    if (response && response?.length) {
+      setTableData(response);
+    }
+  };
+
+  useEffect(() => {
+    fetchVochers()
+  }, []);
+
+  return (
+    <Box>
+        <SnackbarAlert open={toast.open} msg={toast.msg} type={toast.type} handleToastClose={handleToastClose}/>
+        <DataTable row={tableData} column={tableHeaders} loading={load} uniqueId="voucher_id" path="voucher" />
+    </Box>
+  );
+};
+
+export default Vouchers;
