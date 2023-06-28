@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Alert, Box, Button, Snackbar, Stack, TextField, Typography } from "@mui/material";
 import LanguageIcon from '@mui/icons-material/Language';
-import AppleIcon from '@mui/icons-material/Apple';
-import GoogleIcon from '@mui/icons-material/Google';
-import FacebookOutlinedIcon from '@mui/icons-material/FacebookOutlined';
+// import AppleIcon from '@mui/icons-material/Apple';
+// import GoogleIcon from '@mui/icons-material/Google';
+// import FacebookOutlinedIcon from '@mui/icons-material/FacebookOutlined';
 import illustration from "../illustration1.png"
 import { LoginService } from "../services/login.services";
 import LoadingButton from '@mui/lab/LoadingButton';
