@@ -1,82 +1,96 @@
 import React from "react";
-import { Container, Grid, Card, CardContent, Box, Button, Stack } from "@mui/material";
-import TextField from "@mui/material/TextField";
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Container,
+  TextField,
+  Grid,
+  Avatar,
+  Typography,
+} from "@mui/material";
+import AvatarImg from "../data/man.png"
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 const theme = createTheme();
 
 const ProfileEditPage = () => {
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle form submission logic here
-  };
-
   return (
     <ThemeProvider theme={theme}>
-      <Container>
-        <Card sx={{ maxWidth: "650px", margin: "0 auto", height: "fit-content" }}>
-          <CardContent>
-            <Grid container spacing={2}>
-              <Grid item md={6}>
-                <h2>Profile Edit</h2>
-                <Box component="form" onSubmit={handleSubmit}>
-                  <Grid container direction="column" spacing={2}>
-                    <Grid item>
-                      <TextField
-                        label="First Name"
-                        variant="outlined"
-                        fullWidth
-                        margin="normal"
-                      />
-                    </Grid>
-                    <Grid item>
-                      <TextField
-                        label="Last Name"
-                        variant="outlined"
-                        fullWidth
-                        margin="normal"
-                      />
-                    </Grid>
-                    <Grid item>
-                      <TextField
-                        label="Email"
-                        variant="outlined"
-                        fullWidth
-                        margin="normal"
-                      />
-                    </Grid>
-                    <Grid item>
-                      <TextField
-                        label="Phone Number"
-                        variant="outlined"
-                        fullWidth
-                        margin="normal"
-                      />
-                    </Grid>
-                    <Grid item>
-                      <Stack direction="row" spacing={3}>
-                        <Button sx={{ marginLeft: "15%" }} variant="contained" color="primary" type="submit">
-                          Save
-                        </Button>
-                        <Button variant="contained" color="secondary">
-                          Reset
-                        </Button>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </Box>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          marginTop: "5%",
+        }}
+      >
+        <Container maxWidth="sm">
+          <Card>
+            <CardContent>
+              <Typography variant="h3"></Typography>
+              <Grid
+                container
+                spacing={2}
+                justifyContent="center"
+                alignItems="center"
+              >
+                <Grid item xs={"center"}>
+                  <Avatar sx={{ width: 200, height: 200 }}>
+                    <img alt="profile" src={AvatarImg} />
+                  </Avatar>
+                </Grid>
+
+                <Grid item xs={12}>
+                  <TextField size="small" label="Name" variant="outlined" fullWidth />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    label="Phone Number"
+                    variant="outlined"
+                    fullWidth
+                    size="small"
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField size="small" label="Email" variant="outlined" fullWidth />
+                </Grid>
+                <Grid item xs={12}>
+                <TextField
+                size="small"
+                    label="Date of Birth"
+                    variant="outlined"
+                    fullWidth
+                    type="date"
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    InputProps={{
+                      startAdornment: (
+                        <p></p>
+                      ),
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField size="small" label="Country" variant="outlined" fullWidth />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Button size="medium" variant="contained" fullWidth>
+                    Save
+                  </Button>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Button size="medium" variant="contained" fullWidth>
+                    Reset
+                  </Button>
+                </Grid>
               </Grid>
-              <Grid item md={6} sx={{ display: { xs: "none", sm: "none", md: "block" } }}>
-                <img
-                  src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
-                  alt="User Profile"
-                  style={{ width: "100%", borderRadius: "8px" }}
-                />
-              </Grid>
-            </Grid>
-          </CardContent>
-        </Card>
-      </Container>
+            </CardContent>
+          </Card>
+        </Container>
+      </Box>
     </ThemeProvider>
   );
 };

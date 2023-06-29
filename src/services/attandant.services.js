@@ -40,7 +40,7 @@ export const getAttandantData = async (id) =>{
 
 export const deleteAttandantData = async (id) =>{
     try{
-        const response =  await instance.delete(`api/v1/attendants/${id}/`)
+        const response =  await instance.delete(`api/v1/attendant/${id}/`)
         console.log(response)
         return {
             response: response?.data

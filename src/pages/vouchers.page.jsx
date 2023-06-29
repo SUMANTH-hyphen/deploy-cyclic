@@ -4,11 +4,13 @@ import { deleteVoucherData, getVouchers } from "../services/voucher.services";
 import DataTable from "../components/table.grid";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import { SnackbarAlert } from "../components/feedback";
+import { useLocation } from "react-router-dom";
 
 const Vouchers = () => {
     const [tableData, setTableData] = useState([]);
     const [load, setLoad] = useState(false);
     const [toast, setToast] = useState({open: false, msg: "", type: ""})
+    const {state} = useLocation()
 
     const handleToastClose = () =>{
         setToast({...toast, open: false})
@@ -51,8 +53,9 @@ const Vouchers = () => {
         return setToast({open: true, msg: "something went wrong", type: "error"})
     }
     console.log(response)
-    if(response?.status.includes("ID Deleted")){
+    if(response?.status.includes("Deleted")){
         setToast({open: true, msg: "Deleted Successfully", type: "success"})
+        fetchVochers()
     }
   };
 
@@ -65,17 +68,27 @@ const Vouchers = () => {
     }
     if (response && response?.length) {
       setTableData(response);
+      localStorage.setItem("vouchers", JSON.stringify(response))
+
     }
   };
 
   useEffect(() => {
-    fetchVochers()
-  }, []);
+    if(localStorage.getItem("vouchers") && localStorage.getItem("vouchers")?.length && !state?.status){
+        setTableData(JSON.parse(localStorage.getItem("vouchers")))
+    }
+    else if(state?.status){
+      fetchVochers()
+    }
+    else{
+      fetchVochers()
+    }
+  }, [state]);
 
   return (
     <Box>
         <SnackbarAlert open={toast.open} msg={toast.msg} type={toast.type} handleToastClose={handleToastClose}/>
-        <DataTable row={tableData} column={tableHeaders} loading={load} uniqueId="voucher_id" path="voucher" />
+        <DataTable row={tableData} column={tableHeaders} loading={load} uniqueId="voucher_id" path="voucher" fetch={fetchVochers}/>
     </Box>
   );
 };

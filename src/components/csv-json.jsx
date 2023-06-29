@@ -10,6 +10,9 @@ import Papa from "papaparse";
 import { attendantData, clientData, transactionData, voucherData } from "../data/modals";
 import { LoadingBackdrop, SnackbarAlert } from "./feedback";
 import { createVoucherData } from "../services/voucher.services";
+import { createClientData } from "../services/client.services";
+import { createTransactionData } from "../services/transaction.services";
+import { createAttandantData } from "../services/attandant.services";
 
 export const CsvToJsonConverter = () => {
   const [jsonData, setJsonData] = useState(null);
@@ -30,15 +33,14 @@ export const CsvToJsonConverter = () => {
     let requiredKeys = [];
 
     // Check current path and set the required keys accordingly
-    if (window.location.pathname === "/vouchers") {
+    if (window.location.pathname.includes("vouchers")) {
       requiredKeys = Object.keys(voucherData())
-    } else if (window.location.pathname === "/clients") {
+    } else if (window.location.pathname.includes("clients")) {
       requiredKeys = Object.keys(clientData())
-    } else if (window.location.pathname === "/transactions") {
+    } else if (window.location.pathname.includes("transactions")) {
       requiredKeys = Object.keys(transactionData())
-    } else if (window.location.pathname === "/attandants") {
+    } else if (window.location.pathname.includes("attendant")) {
       requiredKeys = Object.keys(attendantData())
-
     } else {
       alert("invalid csv file");
       return;
@@ -49,7 +51,7 @@ export const CsvToJsonConverter = () => {
       const filteredObject = {};
 
       requiredKeys.forEach((key) => {
-        if (data.hasOwnProperty(key)) {
+        if (data.hasOwnProperty(key) && data[key] !== null && data[key] !== "") {
           filteredObject[key] = data[key];
         }
       });
@@ -62,13 +64,24 @@ export const CsvToJsonConverter = () => {
 
   const handleAddData = async (data) =>{
     setLoad(true)
-    const { response, error} = await createVoucherData(data)
+    let addData = {data: data}
+    let resObj = {}
+    if (window.location.pathname.includes("vouchers")) {
+      resObj = await createVoucherData(addData)
+    } else if (window.location.pathname.includes("clients")) {
+      resObj = await createClientData(addData)
+    } else if (window.location.pathname.includes("transactions")) {
+      resObj = await createTransactionData(addData)
+    } else if (window.location.pathname.includes("attendant")) {
+      resObj = await createAttandantData(addData)
+    }
     setLoad(false)
-    if(error){
+    if(resObj?.error){
       setToast({open: true, msg: "Error", type: "error"})
     }
-    if(response){
+    if(resObj?.response){
       // setToast({open: true, msg: "Done!", type: "success"})
+      console.log(resObj.response)
     }
   }
 

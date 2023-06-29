@@ -1,13 +1,10 @@
 import React, { useState } from "react";
-import { Alert, Box, Button, Snackbar, Stack, TextField, Typography } from "@mui/material";
-import LanguageIcon from '@mui/icons-material/Language';
-// import AppleIcon from '@mui/icons-material/Apple';
-// import GoogleIcon from '@mui/icons-material/Google';
-// import FacebookOutlinedIcon from '@mui/icons-material/FacebookOutlined';
-import illustration from "../illustration1.png"
+import { Box, TextField, Typography } from "@mui/material";
+import illustration from "../data/conex.png"
 import { LoginService } from "../services/login.services";
 import LoadingButton from '@mui/lab/LoadingButton';
 import { useNavigate } from "react-router-dom";
+import { SnackbarAlert } from "../components/feedback";
 
 
 const LoginPage = () => {
@@ -15,15 +12,11 @@ const LoginPage = () => {
     const [ credentials, setCredentials ] = useState({username: "", password: ""})
     const [ load, setLoad ] = useState(false) 
     const navigate = useNavigate()
+    const [toast, setToast] = useState({open: false, msg: "", type: ""})
 
-    const vertical= 'top'
-    const horizontal= 'center'
-    
-    const [open, setOpen] = useState(false)
-    
-    const handleClose = () => {
-        setOpen(false);
-    };
+    const handleToastClose = () =>{
+        setToast({...toast, open: false})
+    }
 
     const handleChange = (e) =>{
         if(e.target.name === "username"){
@@ -43,31 +36,23 @@ const LoginPage = () => {
             return error
         }
         if(!token || !token?.length ){
-            console.log("Not a valid user")
-            setOpen(true)
+            setToast({open: true, msg: "Added successfully!", type: "erro"})
         }
         if(token?.length){  
             localStorage.setItem("token", token)
-            navigate("/vouchers")
+            navigate("/clients")
         }
     }
 
     return (
         <Box sx={{
             display: "row",
-            
-           
             justifyContent: "center",
             alignItems: "center",
-            minHeight: "80vh",
-            backgroundColor: '#FCFDFF',
-           
+            minHeight: "100vh",
+            backgroundColor: '#2b3390',
         }}>
-            <Snackbar anchorOrigin={{vertical, horizontal}} open={open} autoHideDuration={2000} onClose={handleClose}>
-                <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
-                    Not a valid user
-                </Alert>
-            </Snackbar>
+            <SnackbarAlert open={toast.open} msg={toast.msg} type={toast.type} handleToastClose={handleToastClose}/>
             <Box component="header" 
                 sx={{
                     display: "flex",
@@ -80,14 +65,14 @@ const LoginPage = () => {
                     flexShrink: 0,
                     
             }}>
-                <Box sx={{
+                {/* <Box sx={{
                     display: "flex",
                     alignItems: "center",
                     gap: "20px",
                 }}>
                     <LanguageIcon fontSize="medium"/>
                     <Button size="small" variant="outlined">Sign up</Button>
-                </Box>
+                </Box> */}
             </Box>
             <Box sx={{
                 display: "flex",
@@ -101,20 +86,23 @@ const LoginPage = () => {
                     component="div"
                     sx={{
                         display: "inline-flex",
-                        padding: "5%",
+                        pl: "2.5%",
+                        pr: "2.5%",
+                        pt: "5%",
+                        pb: "5%",
                         flexDirection: "column",
                         justifyContent: "space-between",
                         alignItems: "center",
                         borderRadius: "30px",
                         bgcolor: 'background.paper',
-                        boxShadow: "10px 10px 25px #aaaaaa" 
+                        // boxShadow: "10px 10px 25px #aaaaaa" 
                     }}
                 >
                     <Box sx={{
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
-                        gap: "32px",
+                        gap: "50px"
                     }}>
                         <Box sx={{
                             display: "flex",
@@ -123,13 +111,11 @@ const LoginPage = () => {
                             gap: "12px",
                             textAlign: 'center'
                         }}>
-                            <Typography variant="h4" fontWeight="600">Sign in</Typography>
+                            <Typography variant="h4" fontWeight="500">SIGN IN</Typography>
                             {/* <Typography>Hey, Enter your details to loginto your account</Typography> */}
                         </Box>
                         
-                        <Box sx={{
-                            
-                        }}>
+                        <Box>
                             <TextField 
                                 name="username"
                                 label="Username"
@@ -162,10 +148,10 @@ const LoginPage = () => {
                             display: "flex",
                             flexDirection: "column",
                             alignItems: "center",
-                            gap: "32px",
+                            width: "90%"
                         }}>
                             <LoadingButton
-                                size="small" 
+                                size="medium" 
                                 variant="contained" 
                                 fullWidth 
                                 loading={load}
@@ -173,8 +159,6 @@ const LoginPage = () => {
                                 >
                                     Sign in
                             </LoadingButton>
-                            
-                            <Typography variant="caption" display='block'>Don’t have an account? <b>Register Now</b> </Typography>
                         </Box>
                     </Box>
                 </Box>
@@ -185,8 +169,8 @@ const LoginPage = () => {
                         flexDirection: 'column',
                         alignItems: { xs: 'center', md: 'none', sx: 'none' },
                         minWidth: { md: 350 },
-                        width: 420,
-                        height: 450,
+                        width: 300,
+                        height: 350,
                         // maxHeight: { xs: 233, md: 167 },
                         // maxWidth: { xs: 350, md: 250 },
                         flexShrink: 0,

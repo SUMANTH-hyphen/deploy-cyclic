@@ -9,15 +9,16 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 const theme = createTheme({
   palette: {
     primary: {
-      main: "#2b3036ff",
-      contrastText: '#fff', // This is an orange looking color
+      // main: "#2b3036ff",
+      main: "#2b3390",
+      contrastText: '#fff',
     },
     secondary: {
       main: "#2b3036ff",
-      contrastText: '#fff' //Another orange-ish color
+      contrastText: '#fff' 
     }
   },
-  fontFamily: "roboto" // as an aside, highly recommend importing roboto font for Material UI projects! Looks really nice
+  fontFamily: "roboto" 
 });
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

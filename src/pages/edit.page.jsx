@@ -61,50 +61,128 @@ const EditPage = () => {
         setLoad(true)
         if(window.location.pathname.includes("add")){
             let resObject = {}
+            let addData = {"data": [data]}
             if(window.location.pathname.includes("vouchers")){
-                resObject = await createVoucherData(data)
+                resObject = await createVoucherData(addData)
+                setLoad(false)
+                if(resObject?.error){
+                    return setToast({open: true, msg: "Something went wrong", type: "error"})
+                }
+                if(resObject?.response){
+                    setToast({open: true, msg: "Added successfully!", type: "success"})
+                    setTimeout(()=>{
+                        navigate("/vouchers", {state: {status: true}})
+                    },1500)
+                }
             }
             if(window.location.pathname.includes("clients")){
-                resObject = await createClientData(data)
+                if(!data?.address?.length){
+                    console.log("yesss")
+                    setLoad(false)
+                    setToast({open: true, msg: "Address is empty", type: "error"})
+                    return
+                }
+                resObject = await createClientData(addData)
+                setLoad(false)
+                if(resObject?.error){
+                    return setToast({open: true, msg: "Something went wrong", type: "error"})
+                }
+                if(resObject?.response){
+                    setToast({open: true, msg: "Added successfully!", type: "success"})
+                    setTimeout(()=>{
+                        navigate("/clients", {state: {status: true}})
+                    },1500)
+                }
             }
             if(window.location.pathname.includes("transactions")){
-                resObject = await createTransactionData(data)
+                resObject = await createTransactionData(addData)
+                setLoad(false)
+                if(resObject?.error){
+                    return setToast({open: true, msg: "Something went wrong", type: "error"})
+                }
+                if(resObject?.response){
+                    setToast({open: true, msg: "Added successfully!", type: "success"})
+                    setTimeout(()=>{
+                        navigate("/transactions", {state: {status: true}})
+                    },1500)
+                }
             }
             if(window.location.pathname.includes("attendants")){
-                resObject = await createAttandantData(data)
+                if(data?.profile?.length < 1 || !data?.profile){
+                    let copy = data
+                    delete copy["profile"]
+                    addData = {data: [copy]}
+                }
+                console.log(addData)
+                resObject = await createAttandantData(addData)
+                setLoad(false)
+                if(resObject?.error){
+                    return setToast({open: true, msg: "Something went wrong", type: "error"})
+                }
+                if(resObject?.response){
+                    setToast({open: true, msg: "Added successfully!", type: "success"})
+                    setTimeout(()=>{
+                        navigate("/attendants", {state: {status: true}})
+                    },1500)
+                }
             }
 
-            setLoad(false)
-            if(resObject?.error){
-                return setToast({open: true, msg: "Something went wrong", type: "error"})
-            }
-            if(resObject?.response){
-                setToast({open: true, msg: "Added successfully!", type: "success"})
-                navigate(-1)
-            }
         }
         else{
             let resObject = {}
             if(window.location.pathname.includes("vouchers")){
                 resObject = await putVoucherData(data?.voucher_id, data)
+                setLoad(false)
+                if(resObject?.error){
+                    return setToast({open: true, msg: "Something went wrong", type: "error"})
+                }
+                if(resObject?.response){
+                    setToast({open: true, msg: "Update successfully!", type: "success"})
+                    setTimeout(()=>{
+                        navigate("/vouchers", {state: {status: true}})
+                    },1500)
+                }
             }
             if(window.location.pathname.includes("clients")){
                 resObject = await putClientData(data?.client_id, data)
+                setLoad(false)
+                if(resObject?.error){
+                    return setToast({open: true, msg: "Something went wrong", type: "error"})
+                }
+                if(resObject?.response){
+                    setToast({open: true, msg: "Update successfully!", type: "success"})
+                    setTimeout(()=>{
+                        navigate("/clients", {state: {status: true}})
+                    },1500)
+                }
             }
             if(window.location.pathname.includes("transactions")){
                 resObject = await putTransactionData(data?.txn_id, data)
+                setLoad(false)
+                if(resObject?.error){
+                    return setToast({open: true, msg: "Something went wrong", type: "error"})
+                }
+                if(resObject?.response){
+                    setToast({open: true, msg: "Update successfully!", type: "success"})
+                    setTimeout(()=>{
+                        navigate("/transactions", {state: {status: true}})
+                    },1500)
+                }
             }
             if(window.location.pathname.includes("attendants")){
                 resObject = await putAttandantData(data?.atdt_id, data)
+                setLoad(false)
+                if(resObject?.error){
+                    return setToast({open: true, msg: "Something went wrong", type: "error"})
+                }
+                if(resObject?.response){
+                    setToast({open: true, msg: "Update successfully!", type: "success"})
+                    setTimeout(()=>{
+                        navigate("/attendants", {state: {status: true}})
+                    },1500)
+                }
             }
 
-            setLoad(false)
-            if(resObject?.error){
-                return setToast({open: true, msg: "Something went wrong", type: "error"})
-            }
-            if(resObject?.response){
-                setToast({open: true, msg: "Update successfully!", type: "success"})
-            }
         }
     }
 
@@ -147,14 +225,18 @@ const EditPage = () => {
                                 <Grid item xs={12} sm={6} key={index}>
                                     <FormControl fullWidth>
                                         <TextField
+                                            key={index}
                                             name={title}
                                             label={title}
                                             value={data[title] || ""}
                                             InputLabelProps={{ shrink: true, required: true }}
                                             type={handleType(title)}
-                                            disabled={title.includes("id") && !window.location.pathname.includes("add") ? true: false}
+                                            // disabled={title.includes("id") && !window.location.pathname.includes("add") ? true: false}
                                             fullWidth
                                             onChange={(e)=>handleChange(e)}
+                                            InputProps={{
+                                                readOnly: window.location.pathname.includes("transactions") ? true : false 
+                                            }}
                                         />
                                     </FormControl>
                                 </Grid>
@@ -163,8 +245,14 @@ const EditPage = () => {
                     }
                 </Grid>
                 <Stack direction="row" spacing={5} justifyContent="center" alignItems="center">
-                    <Button variant="outlined" size="small" onClick={()=> handleReset()}>Reset</Button>
-                    <Button variant="outlined" size="small" onClick={()=> handleSave()}>Save</Button>
+                    {
+                        !window.location.pathname.includes("transactions") ? (
+                            <>
+                                <Button variant="outlined" size="small" onClick={()=> handleReset()}>Reset</Button>
+                                <Button variant="outlined" size="small" onClick={()=> handleSave()}>Save</Button>
+                            </>
+                            ) : ""
+                        }
                 </Stack>
             </Stack>
         </Box>

@@ -4,11 +4,13 @@ import { SnackbarAlert } from "../components/feedback";
 import DataTable from "../components/table.grid";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import { deleteTransactionData, getTransactions } from "../services/transaction.services";
+import { useLocation } from "react-router-dom";
 
 const Transactions = () =>{
     const [tableData, setTableData] = useState([]);
     const [load, setLoad] = useState(false);
     const [toast, setToast] = useState({open: false, msg: "", type: ""})
+    const {state} = useLocation()
 
     const handleToastClose = () =>{
         setToast({...toast, open: false})
@@ -41,11 +43,12 @@ const Transactions = () =>{
     const {response, error} = await deleteTransactionData(id)
     setLoad(false)
     if(error){
-        setToast({open: true, msg: "something went wrong", type: "error"})
+        return setToast({open: true, msg: "something went wrong", type: "error"})
     }
     console.log(response)
-    if(response?.status.includes("deleted")){
+    if(response?.status.includes("Deleted")){
         setToast({open: true, msg: "Deleted Successfully", type: "success"})
+        fetchTransactions()
     }
   };
 
@@ -58,12 +61,21 @@ const Transactions = () =>{
     }
     if (response && response?.length) {
       setTableData(response);
+      localStorage.setItem("transactions", JSON.stringify(response))
     }
   };
 
   useEffect(() => {
-    fetchTransactions()
-  }, []);
+    if(localStorage.getItem("transactions") && localStorage.getItem("transactions")?.length && !state?.status){
+      setTableData(JSON.parse(localStorage.getItem("transactions")))
+    }
+    else if(state?.status){
+      fetchTransactions()
+    }
+    else{
+      fetchTransactions()
+      }
+  }, [state]);
 
   return (
     <Box>

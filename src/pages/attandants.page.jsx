@@ -4,11 +4,13 @@ import { SnackbarAlert } from "../components/feedback";
 import DataTable from "../components/table.grid";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import { deleteAttandantData, getAttandants } from "../services/attandant.services";
+import { useLocation } from "react-router-dom";
 
 const Attandants = () =>{
     const [tableData, setTableData] = useState([]);
     const [load, setLoad] = useState(false);
     const [toast, setToast] = useState({open: false, msg: "", type: ""})
+    const {state} = useLocation()
 
     const handleToastClose = () =>{
         setToast({...toast, open: false})
@@ -29,7 +31,7 @@ const Attandants = () =>{
       flex: 0.5,
       renderCell: (params) => (
         <>
-          <IconButton onClick={() => handleDelete(params?.row?.atdt_id)}>
+          <IconButton onClick={() => handleDelete(params?.row?.employee_id)}>
             <DeleteOutlineOutlinedIcon color="primary" />
           </IconButton>
         </>
@@ -45,8 +47,9 @@ const Attandants = () =>{
         return setToast({open: true, msg: "something went wrong", type: "error"})
     }
     console.log(response)
-    if(response?.status.includes("ID Deleted")){
+    if(response?.status.includes("Deleted")){
         setToast({open: true, msg: "Deleted Successfully", type: "success"})
+        fetchAttendants()
     }
   };
 
@@ -59,12 +62,22 @@ const Attandants = () =>{
     }
     if (response && response?.length) {
       setTableData(response);
+      localStorage.setItem("attendants", JSON.stringify(response))
     }
   };
 
   useEffect(() => {
-    fetchAttendants()
-  }, []);
+    console.log(state)
+    if(localStorage.getItem("attendants") && localStorage.getItem("attendants")?.length && !state?.status){
+        setTableData(JSON.parse(localStorage.getItem("attendants")))
+    }
+    else if(state?.status){
+      fetchAttendants()
+    }
+    else{
+      fetchAttendants()
+    }
+  }, [state]);
 
   return (
     <Box>
